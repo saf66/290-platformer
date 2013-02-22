@@ -1,3 +1,10 @@
+/*
+ * Author: Sean Fox (saf66)
+ * Description:
+ *    This class is responsible for allowing user input to control the main character.
+ *    This covers player physics such as running, jumping, and collisions.
+ */
+
 using UnityEngine;
 using System.Collections;
 
