@@ -17,14 +17,19 @@ public class PlayerController : MonoBehaviour {
 	public const float friction = 4.0f;			// horizontal friction
 	public const float jumpPower = 15.0f;		// initial vertical velocity
 	public const float jumpSpeed = 1.8f;		// additional vertical velocity when holding jump
-	public const float jumpTime = 0.35f;		// maximum time a jump can be held
+	public const float max_jumpTime = 0.35f;	// maximum time a jump can be held
+	public const float max_invTime = 0.75f;		// maximum time spent in invincible mode
 	public const float gravity = 2.5f;			// gravity
+	public const float knockback_x = 2.8f;		// horizontal knockback force
+	public const float knockback_y = 1.8f;		// vertical knockback force
 	
 	private CharacterController cc;				// allows for player control
 	private Vector3 velocity = Vector3.zero;	// player movement vector
-	private bool faceRight = true;				// is the player facing right?
-	private bool jumpHeld = false;				// is the jump button being held?
-	private float airTime = 0.0f;				// time spent in the air
+	private bool isFacingRight = true;			// is the player facing right?
+	private bool isJumpHeld = false;			// is the jump button being held?
+	private float jumpTime = 0.0f;				// time spent in the air
+	private bool isInvincible = false;			// can the player take damage?
+	private float invincibleTime = 0.0f;		// time spent in invincible mode
 	
 	void Start () {
 		// get the character controller
@@ -39,9 +44,9 @@ public class PlayerController : MonoBehaviour {
 		// is there horizontal input?
 		if (dx != 0.0f) {
 			// do the movement and direction match?
-			if (faceRight && dx < 0.0f || !faceRight && dx > 0.0f) {
+			if (isFacingRight && dx < 0.0f || !isFacingRight && dx > 0.0f) {
 				// turn the player to face the opposite direction
-				faceRight = !faceRight;
+				isFacingRight = !isFacingRight;
 				transform.localScale = -transform.localScale;
 				velocity.x = 0.0f;
 			}
@@ -77,10 +82,10 @@ public class PlayerController : MonoBehaviour {
 			// reset vertical velocity
 			velocity.y = 0.0f;
 			// is the jump button pressed?
-			if (Input.GetButton("Jump") && !jumpHeld) {
+			if (Input.GetButton("Jump") && !isJumpHeld) {
 				// reset jump timer
-				airTime = 0.0f;
-				jumpHeld = true;
+				jumpTime = 0.0f;
+				isJumpHeld = true;
 				// give the player an initial vertical push
 				velocity.y += jumpPower * Time.fixedDeltaTime;
 				//TODO: play the "start jump" animation
@@ -90,15 +95,15 @@ public class PlayerController : MonoBehaviour {
 			// is the jump button pressed?
 			if (Input.GetButton("Jump")) {
 				// has the jump button not been released and has the jump timer not run out?
-				if (jumpHeld && airTime < jumpTime) {
+				if (isJumpHeld && jumpTime < max_jumpTime) {
 					// give the player additional vertical speed
 					velocity.y += jumpSpeed * Time.fixedDeltaTime;
 					// increment the jump timer
-					airTime += Time.fixedDeltaTime;
+					jumpTime += Time.fixedDeltaTime;
 				}
 			} else {
 				// player released the jump button in midair
-				jumpHeld = false;
+				isJumpHeld = false;
 			}
 			// apply gravity
 			velocity.y -= gravity * Time.fixedDeltaTime;
@@ -112,7 +117,7 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 		// restrict maximum vertical velocity
-		velocity.y = Mathf.Clamp(velocity.y, -gravity, Mathf.Infinity);
+		velocity.y = Mathf.Clamp(velocity.y, -gravity, gravity);
 		
 		
 		// move the player
@@ -121,13 +126,34 @@ public class PlayerController : MonoBehaviour {
 		// player should quit jumping if they hit the ceiling
 		if ((cf & CollisionFlags.Above) == CollisionFlags.Above) {
 			velocity.y = 0.0f;
-			airTime = jumpTime;
+			jumpTime = max_jumpTime;
+		}
+		
+		// is the player in invincible mode?
+		if (isInvincible) {
+			// has the invincible mode timer ran out?
+			if (invincibleTime < max_invTime) {
+				// make the sprite flash
+				renderer.enabled = ((int) (invincibleTime * 10.0f)) % 2 == 1;
+				// increment the timer
+				invincibleTime += Time.fixedDeltaTime;
+			} else {
+				// reset invincible mode
+				isInvincible = false;
+				invincibleTime = 0.0f;
+				renderer.enabled = true;
+			}
 		}
 	}
 	
 	void OnControllerColliderHit (ControllerColliderHit hit) {
-		if (hit.collider.tag == "Enemy") {
-			//TODO: take damage
+		//TODO: pass through enemies while invincible
+		if (hit.collider.tag == "Enemy" && !isInvincible) {
+			//TODO: take damage, check if dead
+			isInvincible = true;
+			// push the player away from the enemy
+			cc.Move(new Vector3(isFacingRight ? -knockback_x : knockback_x, knockback_y));
+			//TODO: play "damage" animation
 			renderer.material.color = Color.red;
 		}
 	}

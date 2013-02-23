@@ -11,11 +11,11 @@ using System.Collections;
 
 public class CameraController : MonoBehaviour {
 
-	public Transform player = null;		// the object to track with the camera
-	public float smoothness = 0.1f;		// damping parameter
+	public Transform player = null;			// the object to track with the camera
+	public const float smoothness = 0.1f;	// damping parameter
 	
-	private float xv = 0.0f;			// current horizontal velocity
-	private float yv = 0.0f;			// current vertical velocity
+	private float xv = 0.0f;				// current horizontal velocity
+	private float yv = 0.0f;				// current vertical velocity
 
     void FixedUpdate () {
 		// get the camera position, player position, and player velocity
