@@ -45,8 +45,13 @@ public class PlayerController : MonoBehaviour {
 				transform.localScale = -transform.localScale;
 				velocity.x = 0.0f;
 			}
-			// move the player right
+			// move the player in the proper direction
 			velocity.x += Mathf.Sign(dx) * accel * speed * Time.fixedDeltaTime;
+			// is the player grounded?
+			if (cc.isGrounded) {
+				//TODO: play the "run" animation
+				renderer.material.color = Color.yellow;
+			}
 		} else {
 			// apply friction based on current direction
 			if (velocity.x < 0.0f) {
@@ -55,6 +60,11 @@ public class PlayerController : MonoBehaviour {
 			} else if (velocity.x > 0.0f) {
 				velocity.x -= friction * Time.fixedDeltaTime;
 				velocity.x = Mathf.Clamp(velocity.x, 0.0f, speed);
+			}
+			// is the player grounded?
+			if (cc.isGrounded) {
+				//TODO: play the "idle" animation
+				renderer.material.color = Color.white;
 			}
 		}
 		// restrict maximum horizontal velocity
@@ -73,12 +83,14 @@ public class PlayerController : MonoBehaviour {
 				jumpHeld = true;
 				// give the player an initial vertical push
 				velocity.y += jumpPower * Time.fixedDeltaTime;
+				//TODO: play the "start jump" animation
+				renderer.material.color = Color.magenta;
 			}
 		} else {
 			// is the jump button pressed?
 			if (Input.GetButton("Jump")) {
 				// has the jump button not been released and has the jump timer not run out?
-				if (jumpHeld && airTime <= jumpTime) {
+				if (jumpHeld && airTime < jumpTime) {
 					// give the player additional vertical speed
 					velocity.y += jumpSpeed * Time.fixedDeltaTime;
 					// increment the jump timer
@@ -90,6 +102,14 @@ public class PlayerController : MonoBehaviour {
 			}
 			// apply gravity
 			velocity.y -= gravity * Time.fixedDeltaTime;
+			// check which jump animation to play
+			if (velocity.y > 0.0f) {
+				//TODO: play the "jumping" animation
+				renderer.material.color = Color.green;
+			} else if (velocity.y < -0.1f) {
+				//TODO: play the "falling" animation
+				renderer.material.color = Color.blue;
+			}
 		}
 		// restrict maximum vertical velocity
 		velocity.y = Mathf.Clamp(velocity.y, -gravity, Mathf.Infinity);
@@ -97,12 +117,18 @@ public class PlayerController : MonoBehaviour {
 		
 		// move the player
 		CollisionFlags cf = cc.Move(velocity);
-		//TODO: reset vertical velocity during ceiling collision
+		
+		// player should quit jumping if they hit the ceiling
+		if ((cf & CollisionFlags.Above) == CollisionFlags.Above) {
+			velocity.y = 0.0f;
+			airTime = jumpTime;
+		}
 	}
 	
 	void OnControllerColliderHit (ControllerColliderHit hit) {
 		if (hit.collider.tag == "Enemy") {
 			//TODO: take damage
+			renderer.material.color = Color.red;
 		}
 	}
 }
