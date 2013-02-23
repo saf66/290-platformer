@@ -76,10 +76,10 @@ public class PlayerController : MonoBehaviour {
 		if (cc.isGrounded) {
 			// reset vertical velocity
 			velocity.y = 0.0f;
-			// reset jump timer
-			airTime = 0.0f;
 			// is the jump button pressed?
 			if (Input.GetButton("Jump") && !jumpHeld) {
+				// reset jump timer
+				airTime = 0.0f;
 				jumpHeld = true;
 				// give the player an initial vertical push
 				velocity.y += jumpPower * Time.fixedDeltaTime;
