@@ -5,6 +5,9 @@
  *    This covers player physics such as running, jumping, and collisions.
  */
 
+//TODO: turn all literals into public variables/constants
+//TODO: (health, lives) + HUD, respawning, animations + textures
+
 using UnityEngine;
 using System.Collections;
 
