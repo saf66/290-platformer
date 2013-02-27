@@ -8,6 +8,7 @@ public class EnemyAI : MonoBehaviour {
 	public int attack_range = 5;
 	public int speed = 20;
 	public string playerTag = "Player";
+	
 	// Use this for initialization
 	void Start () {
 	
@@ -25,13 +26,12 @@ public class EnemyAI : MonoBehaviour {
 		}else {
 		//insert movement script here (i.e. fly walk.. )
 			GameObject player = GameObject.FindGameObjectWithTag(playerTag);
-			float timefactor = speed/(100*distance_to_player());
-			Vector3 newposition = Vector3.Lerp(this.transform.position, player.transform.position,timefactor);
-			newposition.y = this.transform.position.y;
-			this.transform.position = newposition;
+			//face player
+			this.transform.rotation = Quaternion.LookRotation(player.transform.position - this.transform.position);
+			this.transform.Translate( player.transform.forward * speed * Time.deltaTime);
 			
 		}
-	}
+}
 	float distance_to_player(){
 		GameObject player = GameObject.FindGameObjectWithTag(playerTag);
 		return Vector3.Distance (this.transform.position, player.transform.position);
@@ -56,5 +56,15 @@ public class EnemyAI : MonoBehaviour {
 			//Insert destroy effects here
 			Destroy(this.gameObject);
 		}	
+	}
+	void OnCollisionEnter (Collision other){
+		Collider obj = other.collider;
+		if(obj.tag.Equals(playerTag)){
+			
+		}else {
+			
+		}
+		
+		
 	}
 }
