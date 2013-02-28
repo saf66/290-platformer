@@ -15,14 +15,15 @@ public class BossAI : MonoBehaviour {
 	public GameObject boss = null;				// the boss gameobject
 	public Transform player = null;				// the player object
 	public GameObject eventwall = null;			// the wall blocking the goal
+	public Transform[] platforms = null;		// platforms to ignore
 	
 	public const float aggroRadius = 21.0f;		// radius at which the boss starts targeting the player
 	public const float damage = 30.0f;			// amount of damage the boss deals
 	public const float max_invTime = 0.75f;		// maximum time spent in invincible mode
 	public const float invincibleFactor = 10.0f;// frame multiplication for invincibility animation
-	public const float speed = 0.1f;			// horizontal movement speed
-	public const float jumpPower = 25.0f;		// initial vertical velocity
-	public const float gravity = 1.0f;			// gravity
+	public const float speed = 0.07f;			// horizontal movement speed
+	public const float jumpPower = 15.0f;		// initial vertical velocity
+	public const float gravity = 0.4f;			// gravity
 	
 	private CharacterController cc;				// allows for boss control
 	private Vector3 velocity = Vector3.zero;	// boss movement vector
@@ -33,6 +34,10 @@ public class BossAI : MonoBehaviour {
 	void Start () {
 		// get the character controller
 		cc = boss.GetComponent<CharacterController>();
+		// ignore certain platforms
+		for (int i = 0; i < platforms.Length; i++) {
+			Physics.IgnoreCollision(platforms[i].collider, boss.collider);
+		}
 	}
 	
 	void FixedUpdate () {
@@ -88,7 +93,6 @@ public class BossAI : MonoBehaviour {
 			}
 			// turn invincible
 			isInvincible = true;
-			//TODO: play "damage" animation
 			renderer.material.color = Color.red;
 		}
 	}
