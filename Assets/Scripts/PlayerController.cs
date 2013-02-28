@@ -158,6 +158,10 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 	
+	public int GetHealth () {
+		return health;
+	}
+	
 	void ApplyDamage (int damage) {
 		if (!isInvincible) {
 			// take damage
