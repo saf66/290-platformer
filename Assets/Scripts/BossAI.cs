@@ -18,7 +18,7 @@ public class BossAI : MonoBehaviour {
 	public Transform[] platforms = null;		// platforms to ignore
 	
 	public const float aggroRadius = 21.0f;		// radius at which the boss starts targeting the player
-	public const float damage = 30.0f;			// amount of damage the boss deals
+	public const float damage = 20.0f;			// amount of damage the boss deals
 	public const float max_invTime = 0.75f;		// maximum time spent in invincible mode
 	public const float invincibleFactor = 10.0f;// frame multiplication for invincibility animation
 	public const float speed = 0.07f;			// horizontal movement speed
