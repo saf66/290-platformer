@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
-
+/** Linneker Carvajal
+ * lac93
+ */
 public class EnemyAI : MonoBehaviour {
 	public int HP = 100;
 	public int field_of_vision_degree = 35;
@@ -12,8 +14,12 @@ public class EnemyAI : MonoBehaviour {
 	public enum unit_type {meele, turret}; 
 	public unit_type type;
 	public GameObject arrow;
-	public float coolDownTime = 1.0f;
-	private bool coolDown = false;
+
+	public float cooldowntime = 1.0f;
+	private bool cooldown = false;
+	public float arrow_speed = 15f;
+	public int maxDamage = 15;
+
 	// Use this for initialization
 	void Start () {
 	switch(this.type){
@@ -30,10 +36,17 @@ public class EnemyAI : MonoBehaviour {
 	void Update () {
 		if (playerinfieldofvision()){
 			attack ();
-		}
+		} else if (canMove)
+			this.rigidbody.velocity = Vector3.zero;
 	}
 	void attack(){
-		if(distance_to_player() <= attack_range && !coolDown){
+
+		GameObject player = GameObject.FindGameObjectWithTag(playerTag);
+		//face player
+		this.transform.LookAt(player.transform.position);
+		
+		if(distance_to_player() <= attack_range && !cooldown){
+
 			switch(this.type){
 			case unit_type.meele: tackle();
 				break;
@@ -42,24 +55,25 @@ public class EnemyAI : MonoBehaviour {
 			default: Debug.Log("Undefined unit_type");
 				break;
 			}
-			coolDown = true;
 			StartCoroutine(cool_down());
-		}else if(canMove){
+		}else if(canMove && !cooldown){
 		//insert movement script here (i.e. fly walk.. )
-			GameObject player = GameObject.FindGameObjectWithTag(playerTag);
-			//face player
-			this.transform.rotation = Quaternion.LookRotation(player.transform.position - this.transform.position);
-			this.transform.Translate( player.transform.forward * speed * Time.deltaTime);
+			this.rigidbody.velocity =(this.transform.forward * speed);
 			
 		}
 	}
 	void fire(){
+		//offset
+		GameObject newMissile = (GameObject)Instantiate(arrow, this.transform.position + this.transform.forward*2, this.transform.rotation);
+		newMissile.SetActive (true);
+		newMissile.GetComponentInChildren<Rigidbody>().velocity =(arrow_speed * this.transform.forward);
+		
 	}
 	void tackle(){
 		GameObject player = GameObject.FindGameObjectWithTag(playerTag);
 		//face player
 		this.transform.rotation = Quaternion.LookRotation(player.transform.position - this.transform.position);
-		this.transform.Translate( player.transform.forward * 10*speed * Time.deltaTime);
+		this.rigidbody.velocity =(this.transform.forward * 2* speed);
 	}
 	float distance_to_player(){
 		GameObject player = GameObject.FindGameObjectWithTag(playerTag);
@@ -82,24 +96,26 @@ public class EnemyAI : MonoBehaviour {
 	
 		HP -= damage;
 		if (HP <= 0){
-			//Insert destroy effects here
+			if (this.transform.parent != null && this.transform.parent.name.Equals("turret"))
+				Destroy(this.transform.parent.gameObject);
 			Destroy(this.gameObject);
 		}	
 	}
 	void OnCollisionEnter (Collision other){
 		Collider obj = other.collider;
 		if(obj.tag.Equals(playerTag)){
-			
+			obj.SendMessage ("ApplyDamage", (int)Random.Range(maxDamage/2, maxDamage));
 		}else {
-			
+			//Do nothing
 		}
 		
 		
 	}
 	IEnumerator cool_down ()
 	{
-		yield return new WaitForSeconds(coolDownTime);  
-		coolDown = false;
+		cooldown = true;
+		yield return new WaitForSeconds(cooldowntime);  
+		cooldown = false;
 		
 	}
 }

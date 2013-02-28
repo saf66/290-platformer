@@ -15,15 +15,13 @@ public class fakebridge : MonoBehaviour {
 	void fall (){
 		rigidbody.constraints &= ~RigidbodyConstraints.FreezePositionY;
 		this.rigidbody.useGravity = true;
-		rigidbody.velocity = new Vector3 (0,5,0);
+		rigidbody.velocity = new Vector3 (0,-5,0);
 	}
 	void OnCollisionEnter(Collision other){
 		Collider obj = other.collider;
 		Debug.Log ("Collision with: "+obj.name);
 		if(obj.tag.Equals("Player")){
-			rigidbody.constraints &= ~RigidbodyConstraints.FreezePositionY;
-			this.rigidbody.useGravity = true;
-			rigidbody.velocity = new Vector3 (0,5,0);
+			fall ();
 		} else if (obj.name.Equals("Slide"))
 		Destroy(this.gameObject);
 	}
