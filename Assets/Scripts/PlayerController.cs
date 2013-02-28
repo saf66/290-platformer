@@ -16,7 +16,10 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 	
-	public const float max_health = 100.0f;		// initial player health
+	public Transform body = null;				// the player's body
+	public Transform sword = null;				// the player's sword
+	
+	public const int max_health = 100;			// initial player health
 	public const float speed = 0.2f;			// horizontal movement speed
 	public const float accel = 6.0f;			// horizontal acceleration
 	public const float friction = 4.0f;			// horizontal friction
@@ -28,10 +31,11 @@ public class PlayerController : MonoBehaviour {
 	public const float knockback_x = 2.8f;		// horizontal knockback force
 	public const float knockback_y = 1.8f;		// vertical knockback force
 	public const float jump_error = 0.1f;		// vertical velocity error correction
+	public const float invincibleFactor = 10.0f;// frame multiplication for invincibility animation
 	
 	private CharacterController cc;				// allows for player control
 	private Vector3 velocity = Vector3.zero;	// player movement vector
-	private float health = max_health;			// current player health
+	private int health = max_health;			// current player health
 	private bool isFacingRight = true;			// is the player facing right?
 	private bool isJumpHeld = false;			// is the jump button being held?
 	private float jumpTime = 0.0f;				// time spent in the air
@@ -54,7 +58,9 @@ public class PlayerController : MonoBehaviour {
 			if (isFacingRight && dx < 0.0f || !isFacingRight && dx > 0.0f) {
 				// turn the player to face the opposite direction
 				isFacingRight = !isFacingRight;
-				transform.localScale = -transform.localScale;
+				Vector3 ls = transform.localScale;
+				ls.x = -ls.x;
+				transform.localScale = ls;
 				velocity.x = 0.0f;
 			}
 			// move the player in the proper direction
@@ -62,7 +68,7 @@ public class PlayerController : MonoBehaviour {
 			// is the player grounded?
 			if (cc.isGrounded) {
 				//TODO: play the "run" animation
-				renderer.material.color = Color.yellow;
+				//body.renderer.material.color = Color.yellow;
 			}
 		} else {
 			// apply friction based on current direction
@@ -76,7 +82,7 @@ public class PlayerController : MonoBehaviour {
 			// is the player grounded?
 			if (cc.isGrounded) {
 				//TODO: play the "idle" animation
-				renderer.material.color = Color.white;
+				//body.renderer.material.color = Color.white;
 			}
 		}
 		// restrict maximum horizontal velocity
@@ -96,7 +102,7 @@ public class PlayerController : MonoBehaviour {
 				// give the player an initial vertical push
 				velocity.y += jumpPower * Time.fixedDeltaTime;
 				//TODO: play the "start jump" animation
-				renderer.material.color = Color.magenta;
+				//body.renderer.material.color = Color.magenta;
 			}
 		} else {
 			// is the jump button pressed?
@@ -117,10 +123,10 @@ public class PlayerController : MonoBehaviour {
 			// check which jump animation to play
 			if (velocity.y > 0.0f) {
 				//TODO: play the "jumping" animation
-				renderer.material.color = Color.green;
+				//body.renderer.material.color = Color.green;
 			} else if (velocity.y < -jump_error) {
 				//TODO: play the "falling" animation
-				renderer.material.color = Color.blue;
+				//body.renderer.material.color = Color.blue;
 			}
 		}
 		// restrict maximum vertical velocity
@@ -141,27 +147,32 @@ public class PlayerController : MonoBehaviour {
 			// has the invincible mode timer ran out?
 			if (invincibleTime < max_invTime) {
 				// make the sprite flash
-				renderer.enabled = ((int) (invincibleTime * 10.0f)) % 2 == 1;
+				sword.renderer.enabled = body.renderer.enabled = ((int) (invincibleTime * invincibleFactor)) % 2 == 1;
 				// increment the timer
 				invincibleTime += Time.fixedDeltaTime;
 			} else {
 				// reset invincible mode
 				isInvincible = false;
 				invincibleTime = 0.0f;
-				renderer.enabled = true;
+				sword.renderer.enabled = body.renderer.enabled = true;
 			}
 		}
 	}
 	
-	void OnControllerColliderHit (ControllerColliderHit hit) {
-		//TODO: pass through enemies while invincible
-		if (hit.collider.tag == "Enemy" && !isInvincible) {
-			//TODO: take damage, check if dead
+	void ApplyDamage (int damage) {
+		if (!isInvincible) {
+			// take damage
+			health -= damage;
+			// check if dead
+			if (health <= 0) {
+				//TODO: respawn
+			}
+			// turn invincible
 			isInvincible = true;
 			// push the player away from the enemy
 			cc.Move(new Vector3(isFacingRight ? -knockback_x : knockback_x, knockback_y));
 			//TODO: play "damage" animation
-			renderer.material.color = Color.red;
+			//body.renderer.material.color = Color.red;
 		}
 	}
 }
