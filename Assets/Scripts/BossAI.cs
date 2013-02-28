@@ -14,23 +14,50 @@ public class BossAI : MonoBehaviour {
 	
 	public GameObject boss = null;				// the boss gameobject
 	public Transform player = null;				// the player object
+	public GameObject eventwall = null;			// the wall blocking the goal
 	
 	public const float aggroRadius = 21.0f;		// radius at which the boss starts targeting the player
 	public const float damage = 30.0f;			// amount of damage the boss deals
 	public const float max_invTime = 0.75f;		// maximum time spent in invincible mode
 	public const float invincibleFactor = 10.0f;// frame multiplication for invincibility animation
+	public const float speed = 0.1f;			// horizontal movement speed
+	public const float jumpPower = 25.0f;		// initial vertical velocity
 	public const float gravity = 1.0f;			// gravity
 	
-	private int health = 400;					// current health
+	private CharacterController cc;				// allows for boss control
+	private Vector3 velocity = Vector3.zero;	// boss movement vector
+	private int health = 350;					// current health
 	private bool isInvincible = false;			// can the boss take damage?
 	private float invincibleTime = 0.0f;		// time spent in invincible mode
 	
+	void Start () {
+		// get the character controller
+		cc = boss.GetComponent<CharacterController>();
+	}
+	
 	void FixedUpdate () {
 		// is the player nearby?
-		Vector3 dp = transform.position - player.transform.position;
+		Vector3 dp = player.transform.position - transform.position;
 		if (dp.magnitude < aggroRadius) {
-			//TODO: engauge the player
+			// move horizontally towards the player
+			velocity.x += Mathf.Sign(dp.x) * speed * Time.fixedDeltaTime;
 		}
+		// restrict maximum horizontal velocity
+		velocity.x = Mathf.Clamp(velocity.x, -speed, speed);
+		
+		// vertical movement
+		if (cc.isGrounded) {
+			// jump in the direction of the player
+			velocity.y = jumpPower * Time.fixedDeltaTime;
+		} else {
+			// apply gravity
+			velocity.y -= gravity * Time.fixedDeltaTime;
+		}
+		// restrict maximum vertical velocity
+		velocity.y = Mathf.Clamp(velocity.y, -gravity, gravity);
+		
+		// move the boss
+		cc.Move(velocity);
 		
 		// is the boss in invincible mode?
 		if (isInvincible) {
@@ -56,6 +83,7 @@ public class BossAI : MonoBehaviour {
 			health -= damage;
 			// check if dead
 			if (health <= 0) {
+				Destroy(eventwall);
 				Destroy(boss);
 			}
 			// turn invincible
