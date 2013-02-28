@@ -134,6 +134,11 @@ public class PlayerController : MonoBehaviour {
 		// move the player
 		CollisionFlags cf = cc.Move(velocity);
 		
+		// reset z position
+		Vector3 lp = transform.localPosition;
+		lp.z = 0.0f;
+		transform.localPosition = lp;
+		
 		// player should quit jumping if they hit the ceiling
 		if ((cf & CollisionFlags.Above) == CollisionFlags.Above) {
 			velocity.y = 0.0f;

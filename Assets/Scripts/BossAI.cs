@@ -19,6 +19,7 @@ public class BossAI : MonoBehaviour {
 	public const float damage = 30.0f;			// amount of damage the boss deals
 	public const float max_invTime = 0.75f;		// maximum time spent in invincible mode
 	public const float invincibleFactor = 10.0f;// frame multiplication for invincibility animation
+	public const float gravity = 1.0f;			// gravity
 	
 	private int health = 400;					// current health
 	private bool isInvincible = false;			// can the boss take damage?
