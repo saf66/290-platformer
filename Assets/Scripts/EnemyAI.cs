@@ -12,8 +12,8 @@ public class EnemyAI : MonoBehaviour {
 	public enum unit_type {meele, turret}; 
 	public unit_type type;
 	public GameObject arrow;
-	public float cooldowntime = 1.0f;
-	private boolean cooldown = false;
+	public float coolDownTime = 1.0f;
+	private bool coolDown = false;
 	// Use this for initialization
 	void Start () {
 	switch(this.type){
@@ -33,7 +33,7 @@ public class EnemyAI : MonoBehaviour {
 		}
 	}
 	void attack(){
-		if(distance_to_player() <= attack_range && !cooldown){
+		if(distance_to_player() <= attack_range && !coolDown){
 			switch(this.type){
 			case unit_type.meele: tackle();
 				break;
@@ -42,7 +42,7 @@ public class EnemyAI : MonoBehaviour {
 			default: Debug.Log("Undefined unit_type");
 				break;
 			}
-			cooldown = true;
+			coolDown = true;
 			StartCoroutine(cool_down());
 		}else if(canMove){
 		//insert movement script here (i.e. fly walk.. )

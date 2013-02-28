@@ -5,8 +5,6 @@
  *    This covers player physics such as running, jumping, and collisions.
  */
 
-//TODO: allow enemy collisions to affect player
-//TODO: turn all literals into public variables/constants
 //TODO: health + HUD, animations + textures
 
 using UnityEngine;
