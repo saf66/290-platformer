@@ -7,12 +7,16 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(Rigidbody))]
+
 public class BossAI : MonoBehaviour {
 	
 	public GameObject boss = null;				// the boss gameobject
 	public Transform player = null;				// the player object
 	
 	public const float aggroRadius = 21.0f;		// radius at which the boss starts targeting the player
+	public const float damage = 30.0f;			// amount of damage the boss deals
 	public const float max_invTime = 0.75f;		// maximum time spent in invincible mode
 	public const float invincibleFactor = 10.0f;// frame multiplication for invincibility animation
 	
@@ -57,6 +61,28 @@ public class BossAI : MonoBehaviour {
 			isInvincible = true;
 			//TODO: play "damage" animation
 			renderer.material.color = Color.red;
+		}
+	}
+	
+	// damage the player on touch
+	void OnTriggerEnter (Collider other) {
+		PlayerController pc = other.GetComponent<PlayerController>();
+		if (pc != null) {
+			pc.SendMessage("ApplyDamage", damage);
+		}
+	}
+	
+	void OnTriggerStay (Collider other) {
+		PlayerController pc = other.GetComponent<PlayerController>();
+		if (pc != null) {
+			pc.SendMessage("ApplyDamage", damage);
+		}
+	}
+	
+	void OnTriggerExit (Collider other) {
+		PlayerController pc = other.GetComponent<PlayerController>();
+		if (pc != null) {
+			pc.SendMessage("ApplyDamage", damage);
 		}
 	}
 }
