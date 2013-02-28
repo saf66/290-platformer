@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-
+/*Linneker Carvajal*/
 public class spingPlataform : MonoBehaviour {
 	public float rotationSpeed = 10; 
 	// Use this for initialization

@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-
+/*Linneker Carvajal*/
 public class TrapRoomScript : MonoBehaviour {
 	public GameObject wallA;
 	public GameObject wallB;
