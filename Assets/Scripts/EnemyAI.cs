@@ -8,10 +8,22 @@ public class EnemyAI : MonoBehaviour {
 	public int attack_range = 5;
 	public int speed = 20;
 	public string playerTag = "Player";
-	
+	public bool canMove;
+	public enum unit_type {meele, turret}; 
+	public unit_type type;
+	public GameObject arrow;
+	public float cooldowntime = 1.0f;
+	private boolean cooldown = false;
 	// Use this for initialization
 	void Start () {
-	
+	switch(this.type){
+			case unit_type.meele: canMove = true;
+				break;
+			case unit_type.turret: canMove = false;
+				break;
+			default: Debug.Log("Undefined unit_type");
+				break;
+			}
 	}
 	
 	// Update is called once per frame
@@ -21,9 +33,18 @@ public class EnemyAI : MonoBehaviour {
 		}
 	}
 	void attack(){
-		if(distance_to_player() <= attack_range){
-		//Insert Attack script here
-		}else {
+		if(distance_to_player() <= attack_range && !cooldown){
+			switch(this.type){
+			case unit_type.meele: tackle();
+				break;
+			case unit_type.turret: fire ();
+				break;
+			default: Debug.Log("Undefined unit_type");
+				break;
+			}
+			cooldown = true;
+			StartCoroutine(cool_down());
+		}else if(canMove){
 		//insert movement script here (i.e. fly walk.. )
 			GameObject player = GameObject.FindGameObjectWithTag(playerTag);
 			//face player
@@ -31,7 +52,15 @@ public class EnemyAI : MonoBehaviour {
 			this.transform.Translate( player.transform.forward * speed * Time.deltaTime);
 			
 		}
-}
+	}
+	void fire(){
+	}
+	void tackle(){
+		GameObject player = GameObject.FindGameObjectWithTag(playerTag);
+		//face player
+		this.transform.rotation = Quaternion.LookRotation(player.transform.position - this.transform.position);
+		this.transform.Translate( player.transform.forward * 10*speed * Time.deltaTime);
+	}
 	float distance_to_player(){
 		GameObject player = GameObject.FindGameObjectWithTag(playerTag);
 		return Vector3.Distance (this.transform.position, player.transform.position);
@@ -65,6 +94,12 @@ public class EnemyAI : MonoBehaviour {
 			
 		}
 		
+		
+	}
+	IEnumerator cool_down ()
+	{
+		yield return new WaitForSeconds(coolDownTime);  
+		coolDown = false;
 		
 	}
 }
