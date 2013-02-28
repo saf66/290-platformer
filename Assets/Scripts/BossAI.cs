@@ -10,19 +10,22 @@ using System.Collections;
 public class BossAI : MonoBehaviour {
 	
 	public GameObject boss = null;				// the boss gameobject
+	public Transform player = null;				// the player object
 	
+	public const float aggroRadius = 21.0f;		// radius at which the boss starts targeting the player
 	public const float max_invTime = 0.75f;		// maximum time spent in invincible mode
 	public const float invincibleFactor = 10.0f;// frame multiplication for invincibility animation
 	
-	private int health = 500;
+	private int health = 400;					// current health
 	private bool isInvincible = false;			// can the boss take damage?
 	private float invincibleTime = 0.0f;		// time spent in invincible mode
-
-	void Start () {
-	}
 	
 	void FixedUpdate () {
-		//TODO: movement AI
+		// is the player nearby?
+		Vector3 dp = transform.position - player.transform.position;
+		if (dp.magnitude < aggroRadius) {
+			//TODO: engauge the player
+		}
 		
 		// is the boss in invincible mode?
 		if (isInvincible) {
