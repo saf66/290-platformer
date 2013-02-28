@@ -13,6 +13,8 @@ public class Arrow : MonoBehaviour {
 			obj.SendMessage ("ApplyDamage", (int)Random.Range(maxDamage/2, maxDamage));
 		}
 		Debug.Log("Collision Arrow");
+		if(this.transform.parent!=null)
+			Destroy(this.transform.parent.gameObject);
 		Destroy(this.gameObject);
 	}
 	
