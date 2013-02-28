@@ -5,8 +5,6 @@
  *    This covers player physics such as running, jumping, and collisions.
  */
 
-//TODO: HUD (health, lives)
-
 using UnityEngine;
 using System.Collections;
 
@@ -14,7 +12,7 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 	
-	public GameObject gm = null;				// GameMaster object
+	private GameObject gm = null;				// GameMaster object
 	public Transform body = null;				// the player's body
 	public Transform sword = null;				// the player's sword
 	
@@ -44,6 +42,8 @@ public class PlayerController : MonoBehaviour {
 	void Start () {
 		// get the character controller
 		cc = GetComponent<CharacterController>();
+		// get the gamemaster object
+		gm = GameObject.FindGameObjectWithTag("GameMaster");
 	}
 	
 	void FixedUpdate () {
