@@ -16,6 +16,7 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 	
+	public const float max_health = 100.0f;		// initial player health
 	public const float speed = 0.2f;			// horizontal movement speed
 	public const float accel = 6.0f;			// horizontal acceleration
 	public const float friction = 4.0f;			// horizontal friction
@@ -26,9 +27,11 @@ public class PlayerController : MonoBehaviour {
 	public const float gravity = 2.5f;			// gravity
 	public const float knockback_x = 2.8f;		// horizontal knockback force
 	public const float knockback_y = 1.8f;		// vertical knockback force
+	public const float jump_error = 0.1f;		// vertical velocity error correction
 	
 	private CharacterController cc;				// allows for player control
 	private Vector3 velocity = Vector3.zero;	// player movement vector
+	private float health = max_health;			// current player health
 	private bool isFacingRight = true;			// is the player facing right?
 	private bool isJumpHeld = false;			// is the jump button being held?
 	private float jumpTime = 0.0f;				// time spent in the air
@@ -115,7 +118,7 @@ public class PlayerController : MonoBehaviour {
 			if (velocity.y > 0.0f) {
 				//TODO: play the "jumping" animation
 				renderer.material.color = Color.green;
-			} else if (velocity.y < -0.1f) {
+			} else if (velocity.y < -jump_error) {
 				//TODO: play the "falling" animation
 				renderer.material.color = Color.blue;
 			}
