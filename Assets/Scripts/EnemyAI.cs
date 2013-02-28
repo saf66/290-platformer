@@ -34,6 +34,9 @@ public class EnemyAI : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		Vector3 position = this.transform.position;
+		position.z = 0;
+		this.transform.position = position;
 		if (playerinfieldofvision()){
 			attack ();
 		} else if (canMove)
@@ -108,6 +111,7 @@ public class EnemyAI : MonoBehaviour {
 		}else {
 			//Do nothing
 		}
+		
 		
 		
 	}
