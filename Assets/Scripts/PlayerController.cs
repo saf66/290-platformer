@@ -5,7 +5,7 @@
  *    This covers player physics such as running, jumping, and collisions.
  */
 
-//TODO: health + HUD, animations + textures
+//TODO: HUD (health, lives)
 
 using UnityEngine;
 using System.Collections;
@@ -153,6 +153,7 @@ public class PlayerController : MonoBehaviour {
 				isInvincible = false;
 				invincibleTime = 0.0f;
 				sword.renderer.enabled = body.renderer.enabled = true;
+				sword.renderer.material.color = body.renderer.material.color = Color.white;
 			}
 		}
 	}
@@ -170,7 +171,7 @@ public class PlayerController : MonoBehaviour {
 			// push the player away from the enemy
 			cc.Move(new Vector3(isFacingRight ? -knockback_x : knockback_x, knockback_y));
 			//TODO: play "damage" animation
-			//body.renderer.material.color = Color.red;
+			sword.renderer.material.color = body.renderer.material.color = Color.red;
 		}
 	}
 }

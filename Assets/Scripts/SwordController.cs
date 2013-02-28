@@ -9,8 +9,6 @@ using System.Collections;
 
 public class SwordController : MonoBehaviour {
 	
-	public Transform player = null;				// the player gameobject
-	
 	public const int damage = 34;				// amount of damage the sword does
 	public const float max_attackTime = 0.1f;	// how long an attack lasts
 	
@@ -60,6 +58,12 @@ public class SwordController : MonoBehaviour {
 				Attack(isAttacking);
 			}
 			attackTime = 0.0f;
+		}
+	}
+	
+	void OnTriggerEnter(Collider other) {
+		if (other.tag == "Enemy") {
+			other.SendMessage("ApplyDamage", damage);
 		}
 	}
 }
