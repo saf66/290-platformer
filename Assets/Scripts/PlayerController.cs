@@ -14,6 +14,7 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 	
+	public GameObject gm = null;				// GameMaster object
 	public Transform body = null;				// the player's body
 	public Transform sword = null;				// the player's sword
 	
@@ -177,7 +178,7 @@ public class PlayerController : MonoBehaviour {
 			health -= damage;
 			// check if dead
 			if (health <= 0) {
-				//TODO: respawn
+				gm.SendMessage("playerDeath");
 			}
 			// turn invincible
 			isInvincible = true;
