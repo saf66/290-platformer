@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour {
 	
 	private CharacterController cc;				// allows for player control
 	private Vector3 velocity = Vector3.zero;	// player movement vector
-	private int health = max_health;			// current player health
+	public static int health = max_health;			// current player health
 	private bool isFacingRight = true;			// is the player facing right?
 	private bool isJumpHeld = false;			// is the jump button being held?
 	private float jumpTime = 0.0f;				// time spent in the air
