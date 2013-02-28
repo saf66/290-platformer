@@ -162,6 +162,10 @@ public class PlayerController : MonoBehaviour {
 		return health;
 	}
 	
+	public int GetMaxHealth () {
+		return max_health;
+	}
+	
 	void ApplyDamage (int damage) {
 		if (!isInvincible) {
 			// take damage
