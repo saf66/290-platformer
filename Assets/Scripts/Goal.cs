@@ -18,7 +18,7 @@ public class Goal : MonoBehaviour {
 	//move to next stage when the player enter the goal area
 	void OnTriggerEnter(Collider other) {
 		Debug.Log("level trigger");
-		GameObject.Find("Main Camera").SendMessage("nextLevel");
+		GameObject.FindGameObjectWithTag("GameMaster").SendMessage("nextLevel");
 	}
 	
 
